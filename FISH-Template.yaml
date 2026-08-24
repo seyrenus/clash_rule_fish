@@ -113,7 +113,7 @@ dns:
     - GEOSITE,private,real-ip # 私有网络，直接返回真实IP，防止访问局域网设备进入内核处理
     - GEOSITE,google,fake-ip # 谷歌部分域名有中国业务，被包含到cn中直连，出现商店下载问题，须指明Fakeip引导进入内核匹配规则
     - RULE-SET,🪜Proxy-FISH,fake-ip # 个人收集的代理域名，包含GeoSite未分类或分类到cn的零散域名
-    - GEOSITE,category-ads-all,real-ip # 广告域名，交给redirect-host模块返回空结果
+    #- GEOSITE,category-ads-all,real-ip # 广告域名，交给redirect-host模块返回空结果，有误杀概率
     - GEOSITE,tracker,real-ip # tracker，包括pt
     - GEOSITE,apple,real-ip # 苹果域名，配合双WAN分流可以避免长链接耗电问题
     - GEOSITE,category-game-platforms-download,real-ip # 各类游戏平台下载域名，包括steam下载
@@ -127,7 +127,7 @@ dns:
   respect-rules: false # DNS请求遵循rule规则代理，需先配置好 proxy-server-nameserver，否则出现鸡蛋问题，强烈不建议和perfer-h3一起使用，用处不大
   default-nameserver: *secure-dns # 用于解析DNS服务器的域名，可以加密但必须为IP
   nameserver-policy: # 优先级高于nameserver，匹配完成之后再去匹配nameserver和fallback
-    "geosite:category-ads-all": rcode://success # 匹配广告域名，返回空结果
+    #- "geosite:category-ads-all": rcode://success # 匹配广告域名，返回空结果，有误杀概率
   proxy-server-nameserver: *secure-dns # 用于解析代理节点的域名，不填则遵循namepolicy，nameserver和fallback
   #proxy-server-nameserver-policy: # 效果和nameserver-policy，指定节点的域名解析规则，当且仅当proxy-server-nameserver不为空时生效
   direct-nameserver: *secure-dns # 解析direct出口的域名，不填则遵循namepolicy，nameserver和fallback
