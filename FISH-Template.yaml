@@ -130,6 +130,7 @@ dns:
     #- "geosite:category-ads-all": rcode://success # 匹配广告域名，返回空结果，有误杀概率
   proxy-server-nameserver: *secure-dns # 用于解析代理节点的域名，不填则遵循namepolicy，nameserver和fallback
   #proxy-server-nameserver-policy: # 效果和nameserver-policy，指定节点的域名解析规则，当且仅当proxy-server-nameserver不为空时生效
+  ##__proxy-server-nameserver-policy__占位
   direct-nameserver: *secure-dns # 解析direct出口的域名，不填则遵循namepolicy，nameserver和fallback
   direct-nameserver-follow-policy: false # direct出口域名是否遵循nameserver-policy，false则使用direct-nameserver
   nameserver: *secure-dns # 兜底默认DNS组，未命中 nameserver-policy 时启用
@@ -201,6 +202,12 @@ tun: # tun性能低开销大，除非必须否则不建议使用
 #  #strict-route: false # 将所有连接路由到 tun 来防止泄漏，但你的设备将无法其他设备被访问，严重拖慢Windows访问速度，可能造成虚拟机运行异常
 #  #endpoint-independent-nat: false # 独立于端点的 NAT，性能可能下降，不建议不需要时开启
 
+
+##__custom__占位
+
+
+
+
 # =============================================
 #                  代理集合
 # =============================================
@@ -217,6 +224,7 @@ proxy-providers:
   ##__provider__占位2
   ##__provider__占位3
   ##__provider__占位4
+  ##__relay__占位
 
 # =============================================
 #                   代理组
@@ -375,6 +383,8 @@ proxy-groups:
     <<: *template-smart
     filter: *FilterKR
     exclude-filter: *ExcludeHigh
+    
+  ##__proxy-groups__占位
 
 # =============================================
 #                  规则提供者
@@ -409,6 +419,8 @@ rule-providers:
 #                  路由规则
 # =============================================
 rules:
+  ##__rules__占位
+
   # 禁用所有代理的QUIC，防止速度不佳和IP泄露，不包括国内网站
   - AND,((DST-PORT,443),(NETWORK,UDP),(NOT,((GEOSITE,cn)))),REJECT # 禁用域名的QUIC，防止速度不佳和IP泄露
   - AND,((DST-PORT,443),(NETWORK,UDP),(NOT,((GEOIP,cn)))),REJECT # 禁用IP的QUIC，防止速度不佳和IP泄露
