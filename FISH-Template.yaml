@@ -221,6 +221,11 @@ proxy-providers:
 # =============================================
 #                   代理组
 # =============================================
+# 模板-代理节点
+template-proxies: &template-proxies [🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能, DIRECT]
+template-direct-first: &template-direct-first [DIRECT, 🪜默认代理, 🖐️手动切换, 🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能]
+template-proxy-first: &template-proxy-first [🪜默认代理, 🖐️手动切换, 🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能, DIRECT]
+
 # 模板-Smart策略组
 template-smart: &template-smart
   type: smart
@@ -248,15 +253,12 @@ template-fallback: &template-fallback
   max-failed-times: 5 # 失败次数，超过则执行一次强制健康检查
 
 # 模板-select策略组
-template-select-proxies: &template-select-proxies
-  type: select
-  proxies: [🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能, DIRECT]
 template-select-direct: &template-select-direct
   type: select
-  proxies: [DIRECT, 🪜默认代理, 🖐️手动切换, 🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能]
+  proxies: *template-direct-first
 template-select-proxy: &template-select-proxy
   type: select
-  proxies: [🪜默认代理, 🖐️手动切换, 🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能, DIRECT]
+  proxies: *template-proxy-first
 
 # 模板-节点筛选规则
 FilterLow: &FilterLow "\\[0\\.\\d+\\]|0\\.\\d+([倍xX])"
@@ -332,7 +334,7 @@ proxy-groups:
 
   - name: 🪜默认代理
     <<: *template-fallback
-    proxies: *template-select-proxies
+    proxies: *template-proxies
 
   - name: 🇭🇰香港智能
     <<: *template-smart
