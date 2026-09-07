@@ -1,0 +1,20 @@
+payload:
+  ## 谷歌AI在GEO标签之外遗漏的域名，不一起代理会触发风控
+  # Gemini web anti-abuse / redirect validation
+  - DOMAIN,www.google.com
+
+  # Google account / OAuth used by Gemini and AI Studio
+  - DOMAIN-SUFFIX,accounts.google.com
+  - DOMAIN-SUFFIX,oauth2.googleapis.com
+  - DOMAIN,apis.google.com
+
+  # Google AI Studio / Gemini shared client infrastructure
+  - DOMAIN-SUFFIX,clients6.google.com
+
+  # Known Gemini mobile dependencies not yet guaranteed in upstream set
+  - DOMAIN,optimizationguide-pa.googleapis.com
+  - DOMAIN,webchannel-robinfrontend-pa.googleapis.com
+
+  # Dynamic Google AI backend naming pattern
+  - DOMAIN-REGEX,^.*-pa\.googleapis\.com$
+  - DOMAIN-REGEX,^.*-pa\.clients6\.google\.com$
