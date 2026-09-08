@@ -229,6 +229,11 @@ proxy-providers:
 # =============================================
 #                   代理组
 # =============================================
+# 模板-代理节点
+template-proxies: &template-proxies [🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能, DIRECT]
+template-direct-first: &template-direct-first [DIRECT, 🪜默认代理, 🖐️手动切换, 🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能]
+template-proxy-first: &template-proxy-first [🪜默认代理, 🖐️手动切换, 🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能, DIRECT]
+
 # 模板-Smart策略组
 template-smart: &template-smart
   type: smart
@@ -255,6 +260,14 @@ template-fallback: &template-fallback
   timeout: 5000 # 健康检查超时，单位ms
   max-failed-times: 5 # 失败次数，超过则执行一次强制健康检查
 
+# 模板-select策略组
+template-select-direct: &template-select-direct
+  type: select
+  proxies: *template-direct-first
+template-select-proxy: &template-select-proxy
+  type: select
+  proxies: *template-proxy-first
+
 # 模板-节点筛选规则
 FilterLow: &FilterLow "\\[0\\.\\d+\\]|0\\.\\d+([倍xX])"
 FilterHigh: &FilterHigh "\\[(2\\.[0-9]*[1-9]\\d*|[3-9](\\.\\d+)?|[1-9]\\d+(\\.\\d+)?)\\]|(2\\.[0-9]*[1-9]\\d*|[3-9](\\.\\d+)?|[1-9]\\d+(\\.\\d+)?)([倍xX])"
@@ -266,20 +279,9 @@ FilterUS: &FilterUS "^(?=.*(?i)(美|波特兰|达拉斯|俄勒冈|凤凰城|费�
 FilterTW: &FilterTW "^(?=.*(?i)(台|新北|彰化|🇼🇸|🇹🇼|TW|tai|TPE|TSA|KHH|Taiwan))(?!.*(5倍|5x)).*$"
 FilterUK: &FilterUK "^(?=.*(?i)(英|英国|UK|大不列颠|伦敦|Kingdom))(?!.*(5倍|5x)).*$"
 # 模板-特殊筛选规则
-FilterGemini: &FilterGemini "^(?=.*(?i)(台湾四期三网优化))(?!.*(5倍|5x)).*$"
-
-# 模板-代理列表模板
-template-proxies: &template-proxies [🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能, DIRECT]
-template-direct: &template-direct [DIRECT, 🪜默认代理, 🖐️手动切换, 🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能]
-template-proxy: &template-proxy [🪜默认代理, 🖐️手动切换, 🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能, DIRECT]
+FilterNoGemini: &FilterNoGemini "^(?=.*(?i)(台湾四期三网优化))(?!.*(5倍|5x)).*$"
 
 proxy-groups:
-  - name: 🤖谷歌AI
-    <<: *template-smart
-    filter: *FilterTW
-    exclude-filter: *FilterGemini
-    icon: https://raw.githubusercontent.com/refined-fish/clash_rule_fish/refs/heads/main/Icons/Gemini.png
-
   - name: 🤖国外AI
     type: select
     proxies:
@@ -295,31 +297,31 @@ proxy-groups:
       ##__ai__占位
       - DIRECT
 
+  - name: 🤖谷歌AI
+    <<: *template-smart
+    filter: *FilterTW
+    exclude-filter: *FilterNoGemini
+    icon: https://raw.githubusercontent.com/refined-fish/clash_rule_fish/refs/heads/main/Icons/Gemini.png
+
   - name: 🌐默认直连
-    type: select
-    proxies: *template-direct
+    <<: *template-select-direct
 
   - name: 🐟漏网之鱼
-    type: select
-    proxies: *template-direct
+    <<: *template-select-direct
 
   - name: ⬇️大文件代理
-    type: select
-    proxies: *template-proxy
+    <<: *template-select-proxy
 
   - name: 🧱GFW
-    type: select
-    proxies: *template-proxy
+    <<: *template-select-proxy
     icon: https://raw.githubusercontent.com/refined-fish/clash_rule_fish/refs/heads/main/Icons/GFW.png
 
   - name: ✈️Telegram
-    type: select
-    proxies: *template-proxy
+    <<: *template-select-proxy
     icon: https://raw.githubusercontent.com/refined-fish/clash_rule_fish/refs/heads/main/Icons/Telegram.png
 
   - name: 📺Youtube
-    type: select
-    proxies: *template-proxy
+    <<: *template-select-proxy
     icon: https://raw.githubusercontent.com/refined-fish/clash_rule_fish/refs/heads/main/Icons/Youtube.png
 
   - name: 📺巴哈姆特
@@ -331,23 +333,19 @@ proxy-groups:
     icon: https://raw.githubusercontent.com/refined-fish/clash_rule_fish/refs/heads/main/Icons/巴哈姆特.png
 
   - name: 🎮Steam
-    type: select
-    proxies: *template-direct
+    <<: *template-select-direct
     icon: https://raw.githubusercontent.com/refined-fish/clash_rule_fish/refs/heads/main/Icons/Steam.png
 
   - name: ☁️微软云盘
-    type: select
-    proxies: *template-direct
+    <<: *template-select-direct
     icon: https://raw.githubusercontent.com/refined-fish/clash_rule_fish/refs/heads/main/Icons/onedrive.png
 
   - name: Ⓜ️微软服务
-    type: select
-    proxies: *template-direct
+    <<: *template-select-direct
     icon: https://raw.githubusercontent.com/refined-fish/clash_rule_fish/refs/heads/main/Icons/Microsoft.png
 
   - name: 🔐PT网站
-    type: select
-    proxies: *template-proxy
+    <<: *template-select-proxy
     icon: https://raw.githubusercontent.com/refined-fish/clash_rule_fish/refs/heads/main/Icons/PT.png
 
   - name: 🖐️手动切换
