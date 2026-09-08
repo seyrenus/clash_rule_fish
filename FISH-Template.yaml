@@ -221,17 +221,18 @@ proxy-providers:
 # =============================================
 #                   代理组
 # =============================================
-# 模板-代理节点
-template-proxies: &template-proxies [🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能, DIRECT]
-template-direct-first: &template-direct-first [DIRECT, 🪜默认代理, 🖐️手动切换, 🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能]
-template-proxy-first: &template-proxy-first [🪜默认代理, 🖐️手动切换, 🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能, DIRECT]
+# 模板-不同代理组
+template-proxies-all: &template-proxies-all [🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能, 🖐️手动切换]
+template-proxies-proxy: &template-proxies-proxy [🪜默认代理, 🖐️手动切换, 🤖AI故转, 🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能, DIRECT]
+template-proxies-direct: &template-proxies-direct [DIRECT, 🪜默认代理, 🖐️手动切换, 🤖AI故转, 🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能]
+template-proxies-ai: &template-proxies-ai [🤖AI故转, 🪜默认代理, 🖐️手动切换, 🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能, DIRECT]
 
-# 模板-Smart策略组
+# 模板-Smart策略组-引入全部节点
 template-smart: &template-smart
   type: smart
   url: https://www.gstatic.com/generate_204
   interval: 120 # 健康检查间隔
-  tolerance: 300 # 延迟容忍度，单位ms
+  tolerance: 100 # 延迟容忍度，单位ms
   lazy: true # 未选中当前组时不进行测试，会导致面板中不手动测试看不见延迟
   timeout: 5000 # 健康检查超时，单位ms
   max-failed-times: 5 # 失败次数，超过则执行一次强制健康检查
@@ -247,7 +248,7 @@ template-fallback: &template-fallback
   type: fallback
   url: https://www.gstatic.com/generate_204
   interval: 120 # 健康检查间隔
-  tolerance: 300 # 延迟容忍度，单位ms
+  tolerance: 100 # 延迟容忍度，单位ms
   lazy: true # 未选中当前组时不进行测试，会导致面板中不手动测试看不见延迟
   timeout: 5000 # 健康检查超时，单位ms
   max-failed-times: 5 # 失败次数，超过则执行一次强制健康检查
@@ -255,10 +256,13 @@ template-fallback: &template-fallback
 # 模板-select策略组
 template-select-direct: &template-select-direct
   type: select
-  proxies: *template-direct-first
+  proxies: *template-proxies-direct
 template-select-proxy: &template-select-proxy
   type: select
-  proxies: *template-proxy-first
+  proxies: *template-proxies-proxy
+template-select-ai: &template-select-ai
+  type: select
+  proxies: *template-proxies-ai
 
 # 模板-节点筛选规则
 FilterLow: &FilterLow "\\[0\\.\\d+\\]|0\\.\\d+([倍xX])"
@@ -271,16 +275,14 @@ FilterUS: &FilterUS "^(?=.*(?i)(美|波特兰|达拉斯|俄勒冈|凤凰城|费�
 FilterTW: &FilterTW "^(?=.*(?i)(台|新北|彰化|🇼🇸|🇹🇼|TW|tai|TPE|TSA|KHH|Taiwan))(?!.*(5倍|5x)).*$"
 FilterUK: &FilterUK "^(?=.*(?i)(英|英国|UK|大不列颠|伦敦|Kingdom))(?!.*(5倍|5x)).*$"
 # 模板-特殊筛选规则
-FilterNoGemini: &FilterNoGemini "^(?=.*(?i)(台湾四期三网优化))(?!.*(5倍|5x)).*$"
+FilterForAI: &FilterForAI "^(?=.*(?i)(台湾四期三网优化))(?!.*(5倍|5x)).*$"
 
 proxy-groups:
   - name: 🤖国外AI
-    <<: *template-select-proxy
+    <<: *template-select-ai
 
   - name: 🤖谷歌AI
-    <<: *template-smart
-    filter: *FilterTW
-    exclude-filter: *FilterNoGemini
+    <<: *template-select-ai
     icon: https://raw.githubusercontent.com/refined-fish/clash_rule_fish/refs/heads/main/Icons/Gemini.png
 
   - name: 🌐默认直连
@@ -334,7 +336,13 @@ proxy-groups:
 
   - name: 🪜默认代理
     <<: *template-fallback
-    proxies: *template-proxies
+    proxies: *template-proxies-all
+
+  - name: 🤖AI故转
+    <<: *template-fallback
+    include-all: true
+    filter: *FilterTW
+    exclude-filter: *FilterForAI
 
   - name: 🇭🇰香港智能
     <<: *template-smart
