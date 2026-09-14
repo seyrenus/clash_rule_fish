@@ -223,19 +223,20 @@ proxy-providers:
 # =============================================
 # 模板-不同代理组
 template-proxies-all: &template-proxies-all [🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能, 🖐️手动切换]
-template-proxies-proxy: &template-proxies-proxy [🪜默认代理, 🖐️手动切换, 🤖AI故转, 🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能, DIRECT]
-template-proxies-direct: &template-proxies-direct [DIRECT, 🪜默认代理, 🖐️手动切换, 🤖AI故转, 🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能]
-template-proxies-ai: &template-proxies-ai [🤖AI故转, 🪜默认代理, 🖐️手动切换, 🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能, DIRECT]
+template-proxies-proxy: &template-proxies-proxy [🪜默认代理, 🖐️手动切换, 🤖AI节点, 🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能, DIRECT]
+template-proxies-direct: &template-proxies-direct [DIRECT, 🪜默认代理, 🖐️手动切换, 🤖AI节点, 🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能]
+template-proxies-ai: &template-proxies-ai [🤖AI节点, 🪜默认代理, 🖐️手动切换, 🇭🇰香港智能, 🇨🇳台湾智能, 🇸🇬狮城智能, 🇯🇵日本智能, 🇺🇲美国智能, 🇬🇧英国智能, 🇰🇷韩国智能, DIRECT]
 
 # 模板-Smart策略组-引入全部节点
 template-smart: &template-smart
   type: smart
   url: https://www.gstatic.com/generate_204
-  interval: 120 # 健康检查间隔
+  interval: 60 # 健康检查间隔
   tolerance: 100 # 延迟容忍度，单位ms
   lazy: true # 未选中当前组时不进行测试，会导致面板中不手动测试看不见延迟
   timeout: 5000 # 健康检查超时，单位ms
   max-failed-times: 5 # 失败次数，超过则执行一次强制健康检查
+  empty-fallback: COMPATIBLE # 当组为空时的回退proxy，默认为COMPATIBLE等效DIRECT
   strategy: sticky-sessions # 负载均衡策略round-robin轮询，sticky-sessions粘性会话（默认）
   include-all: true # 引入所有代理集合，出站代理节点
   policy-priority: "优:1.2;中:1.0;差:0.8" # 策略优先级配置> 1：提高优先级；< 1：降低优先级，默认权重为1，多个用分号间隔
@@ -247,11 +248,23 @@ template-smart: &template-smart
 template-fallback: &template-fallback
   type: fallback
   url: https://www.gstatic.com/generate_204
-  interval: 120 # 健康检查间隔
+  interval: 60 # 健康检查间隔
   tolerance: 100 # 延迟容忍度，单位ms
   lazy: true # 未选中当前组时不进行测试，会导致面板中不手动测试看不见延迟
   timeout: 5000 # 健康检查超时，单位ms
   max-failed-times: 5 # 失败次数，超过则执行一次强制健康检查
+  empty-fallback: COMPATIBLE # 当组为空时的回退proxy，默认为COMPATIBLE等效DIRECT
+
+# 模板-urltest策略组
+template-urltest: &template-urltest
+  type: url-test
+  url: https://www.gstatic.com/generate_204
+  interval: 60 # 健康检查间隔
+  tolerance: 100 # 延迟容忍度，单位ms
+  lazy: true # 未选中当前组时不进行测试，会导致面板中不手动测试看不见延迟
+  timeout: 5000 # 健康检查超时，单位ms
+  max-failed-times: 5 # 失败次数，超过则执行一次强制健康检查
+  empty-fallback: COMPATIBLE # 当组为空时的回退proxy，默认为COMPATIBLE等效DIRECT
 
 # 模板-select策略组
 template-select-direct: &template-select-direct
@@ -281,7 +294,7 @@ proxy-groups:
   - name: 🤖国外AI
     <<: *template-select-ai
 
-  - name: 🤖谷歌AI
+  - name: ✦谷歌AI
     <<: *template-select-ai
     icon: https://raw.githubusercontent.com/refined-fish/clash_rule_fish/refs/heads/main/Icons/Gemini.png
 
@@ -291,7 +304,7 @@ proxy-groups:
   - name: 🐟漏网之鱼
     <<: *template-select-direct
 
-  - name: ⬇️大文件代理
+  - name: ⬇️需代理的下载
     <<: *template-select-proxy
 
   - name: 🧱GFW
@@ -302,11 +315,11 @@ proxy-groups:
     <<: *template-select-proxy
     icon: https://raw.githubusercontent.com/refined-fish/clash_rule_fish/refs/heads/main/Icons/Telegram.png
 
-  - name: 📺Youtube
+  - name: 📹Youtube
     <<: *template-select-proxy
     icon: https://raw.githubusercontent.com/refined-fish/clash_rule_fish/refs/heads/main/Icons/Youtube.png
 
-  - name: 📺巴哈姆特
+  - name: 🪽巴哈姆特
     type: select
     proxies:
       - 🇭🇰香港智能
@@ -314,7 +327,7 @@ proxy-groups:
       - DIRECT
     icon: https://raw.githubusercontent.com/refined-fish/clash_rule_fish/refs/heads/main/Icons/巴哈姆特.png
 
-  - name: 🎮Steam
+  - name: ⚙️Steam
     <<: *template-select-direct
     icon: https://raw.githubusercontent.com/refined-fish/clash_rule_fish/refs/heads/main/Icons/Steam.png
 
@@ -326,7 +339,7 @@ proxy-groups:
     <<: *template-select-direct
     icon: https://raw.githubusercontent.com/refined-fish/clash_rule_fish/refs/heads/main/Icons/Microsoft.png
 
-  - name: 🔐PT网站
+  - name: 💊PT网站
     <<: *template-select-proxy
     icon: https://raw.githubusercontent.com/refined-fish/clash_rule_fish/refs/heads/main/Icons/PT.png
 
@@ -338,8 +351,8 @@ proxy-groups:
     <<: *template-fallback
     proxies: *template-proxies-all
 
-  - name: 🤖AI故转
-    <<: *template-fallback
+  - name: 🤖AI节点
+    <<: *template-urltest
     include-all: true
     filter: *FilterTW
     exclude-filter: *FilterForAI
@@ -393,11 +406,6 @@ rule-providers:
     url: https://raw.githubusercontent.com/refined-fish/clash_rule_fish/refs/heads/main/Ruleset/🪜Proxy-FISH.yaml
     path: ./providers/rule/rule-provider_🪜Proxy-FISH.yaml
 
-  🤖GoogleAI-FISH:
-    <<: *template-rule-providers
-    url: https://raw.githubusercontent.com/refined-fish/clash_rule_fish/refs/heads/main/Ruleset/🤖GoogleAI-FISH.yaml
-    path: ./providers/rule/rule-provider_🤖GoogleAI-FISH.yaml
-
   🌐Direct-FISH:
     <<: *template-rule-providers
     url: https://raw.githubusercontent.com/refined-fish/clash_rule_fish/refs/heads/main/Ruleset/🌐Direct-FISH.yaml
@@ -423,7 +431,7 @@ rules:
 
   # FISH自定义规则块
   - RULE-SET,🪜Proxy-FISH,🧱GFW # FISH自定义代理
-  - RULE-SET,⬇️Download-FISH,⬇️大文件代理 # FISH自定义大文件代理
+  - RULE-SET,⬇️Download-FISH,⬇️需代理的下载 # FISH自定义需代理的下载
   - RULE-SET,🌐Direct-FISH,🌐默认直连 # FISH自定义直连
 
   ## 代理规则块，按照使用频率/包含关系排序
@@ -432,14 +440,13 @@ rules:
   - GEOIP,telegram,✈️Telegram,no-resolve # Telegram服务IP
   # 影视相关
   - GEOSITE,tmdb,🧱GFW # TMDB服务，影视刮削，直连访问缓慢经常失败
-  - GEOSITE,youtube,📺Youtube # Youtube服务
-  - GEOSITE,bahamut,📺巴哈姆特 # 巴哈姆特服务
+  - GEOSITE,youtube,📹Youtube # Youtube服务
+  - GEOSITE,bahamut,🪽巴哈姆特 # 巴哈姆特服务
   # 其他
-  - RULE-SET,🔐PT-Web-FISH,🔐PT网站 # PT网页多用cloudFlare，污染严重故代理，需注意有的PT站网页域名也是tracker！
+  - RULE-SET,🔐PT-Web-FISH,💊PT网站 # PT网页多用cloudFlare，污染严重故代理，需注意有的PT站网页域名也是tracker！
   - GEOSITE,tracker,🌐默认直连 # 需要放在PT-Web规则之后，PT tracker，必须直连，否则会代理上传下载
   # Gemini
-  - GEOSITE,google-gemini,🤖谷歌AI # 谷歌AI服务，包含Gemini和AI Studio
-  - RULE-SET,🤖GoogleAI-FISH,🤖谷歌AI # GEO数据遗漏的谷歌AI服务，包含Gemini和AI Studio
+  - GEOSITE,google,✦谷歌AI # 谷歌服务，由于谷歌ai和谷歌服务本身绑定太深，难以切割代理，故统一代理
   # 其他AI相关
   - GEOSITE,category-ai-!cn,🤖国外AI # 国外AI服务
 
@@ -447,7 +454,7 @@ rules:
   - GEOSITE,gfw,🧱GFW # GFW兜底
   - GEOSITE,onedrive,☁️微软云盘 # 微软云盘，放于微软服务前是因为可能特定情况需要代理
   - GEOSITE,microsoft,Ⓜ️微软服务 # 微软服务，放于GFW后是因为github等在GFW中需要代理
-  - GEOSITE,steam,🎮Steam # Steam，默认直连，换区时修改此处，放于GFW之后是因创意工坊需始终代理
+  - GEOSITE,steam,⚙️Steam # Steam，默认直连，换区时修改此处，放于GFW之后是因创意工坊需始终代理
   # 私有地址绕过块
   - GEOSITE,private,🌐默认直连 # 私有地址直连
   - GEOSITE,cn,🌐默认直连 # 中国域名
