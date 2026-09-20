@@ -296,7 +296,7 @@ FilterUS: &FilterUS "^(?=.*(?i)(美|波特兰|达拉斯|俄勒冈|凤凰城|费�
 FilterTW: &FilterTW "^(?=.*(?i)(台|新北|彰化|🇼🇸|🇹🇼|TW|tai|TPE|TSA|KHH|Taiwan))(?!.*(5倍|5x)).*$"
 FilterUK: &FilterUK "^(?=.*(?i)(英|英国|UK|大不列颠|伦敦|Kingdom))(?!.*(5倍|5x)).*$"
 # 模板-特殊筛选规则
-FilterForAI: &FilterForAI "^(?=.*(?i)(AI))(?!.*(5倍|5x)).*$"
+FilterForAI: &FilterForAI "^(?=.*家宽).*$"
 
 proxy-groups:
   - name: 🤖国外AI
