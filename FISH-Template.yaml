@@ -25,7 +25,7 @@ skip-auth-prefixes: # 白名单，允许跳过用户验证的IP
 ## 其他设置
 mode: rule # 运行模式，rule（规则）/ global（全局）/ direct（直连）
 log-level: warning # 内核日志级别
-ipv6: true # 是否接受ipv6流量
+ipv6: false # 是否接受ipv6流量
 ## TCP-Keep-Alive
 keep-alive-interval: 15 # 发送心跳包的间隔，无回应则最多重发9次后判断链路关闭
 keep-alive-idle: 30 # 触发心跳包的链路无活动阈值，无活动后发送心跳包检测对端是否存活
@@ -103,7 +103,7 @@ dns:
   cache-algorithm: arc # DNS缓存算法，lru（默认）性能开销低，被访问到就提前，超出容量则踢出队尾，适合固定访问有限网站；arc策略则是智能匹配，偶然查询的陌生网站不会踢掉经常访问的网站，但是性能开销更大，适合性能宽裕设备
   prefer-h3: true # DoH若支持，则优先使用HTTP/3
   listen: "[::]:1053" # DNS监听端口，支持udp,tcp
-  ipv6: true # 是否解析ipv6地址，否则返回空结果
+  ipv6: false # 是否解析ipv6地址，否则返回空结果
   enhanced-mode: fake-ip # DNS处理模式：redir-host/fake-ip，fake-ip更快但可能引入问题（缓存fakeip后无法故障切换）
   fake-ip-range: 198.18.0.1/16 # fakeip 的 IP 段，tun接口的默认 IPV4 地址 也使用此值作为参考
   fake-ip-range6: fdfe:dcba:9876::1/64 # fakeip 的 IPv6 段
