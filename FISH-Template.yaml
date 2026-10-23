@@ -218,6 +218,7 @@ template-providers: &template-providers
   proxy: 🌐默认直连 # http类型更新时使用的代理组，不建议设置代理，如果你的订阅需要代理才能订阅，那先有鸡还是先有蛋？
   size-limit: 0 # 文件大小限制，0为不限制
   exclude-filter: "(?i)官网|每月|到期|https://|剩余|重置" # 排除的节点名称
+  #filter: "(?i)美国" # 过滤的节点名称
 
 proxy-providers:
   ##__provider__占位1
@@ -295,8 +296,7 @@ FilterKR: &FilterKR "^(?=.*(?i)(韩|🇰🇷|韓|首尔|南朝鲜|KR|KOR|Korea|S
 FilterUS: &FilterUS "^(?=.*(?i)(美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥🇺🇸|US|USA|JFK|SJC|LAX|ORD|ATL|DFW|SFO|MIA|SEA|IAD|United States))(?!.*(5倍|5x)).*$"
 FilterTW: &FilterTW "^(?=.*(?i)(台|新北|彰化|🇼🇸|🇹🇼|TW|tai|TPE|TSA|KHH|Taiwan))(?!.*(5倍|5x)).*$"
 FilterUK: &FilterUK "^(?=.*(?i)(英|英国|UK|大不列颠|伦敦|Kingdom))(?!.*(5倍|5x)).*$"
-# 模板-特殊筛选规则
-FilterForAI: &FilterForAI "^(?=.*家宽).*$"
+FilterNoAI: &FilterNoAI "^(?=.*(?i)(美国三网|三毛\\|美国堪萨斯|三毛\\|美国洛杉矶-3))(?!.*(5倍|5x)).*$"
 
 proxy-groups:
   - name: 🤖国外AI
@@ -372,9 +372,9 @@ proxy-groups:
     proxies: *template-proxies-all
 
   - name: 🤖AI节点
-    <<: *template-urltest
-    include-all: true
-    filter: *FilterForAI
+    <<: *template-smart
+    filter: *FilterUS
+    exclude-filter: *FilterNoAI
 
   - name: 🇭🇰香港智能
     <<: *template-smart
@@ -442,6 +442,11 @@ rule-providers:
     url: https://raw.githubusercontent.com/refined-fish/clash_rule_fish/refs/heads/main/Ruleset/🔐PT-Web-FISH.yaml
     path: ./providers/rule/rule-provider_🔐PT-Web-FISH.yaml
 
+  🇺🇲Proxy-US-FISH:
+    <<: *template-rule-providers
+    url: https://raw.githubusercontent.com/refined-fish/clash_rule_fish/refs/heads/main/Ruleset/🇺🇲Proxy-US-FISH.yaml
+    path: ./providers/rule/rule-provider_🇺🇲Proxy-US-FISH.yaml
+
 # =============================================
 #                  路由规则
 # =============================================
@@ -456,6 +461,7 @@ rules:
   - RULE-SET,🪜Proxy-FISH,🧱GFW # FISH自定义代理
   - RULE-SET,⬇️Download-FISH,⬇️需代理的下载 # FISH自定义需代理的下载
   - RULE-SET,🌐Direct-FISH,🌐默认直连 # FISH自定义直连
+  - RULE-SET,🇺🇲Proxy-US-FISH,🇺🇲美国智能 # FISH自定义美国代理
 
   ## 代理规则块，按照使用频率/包含关系排序
   # telegram相关
